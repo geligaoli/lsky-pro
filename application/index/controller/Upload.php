@@ -210,11 +210,17 @@ class Upload extends Base
         $pathRule = $this->config['path_naming_rule'];
         $fileRule = $this->config['file_naming_rule'];
 
-        $path = trim(str_replace(
-            array_column($naming['path'], 'name'),
-            array_column($naming['path'], 'value'),
-            $pathRule
-        ), '/');
+        if ($pathRule === '{input}') {
+            $path = trim(input('album'), '/');
+        } elseif ($pathRule === '{input_with_user}') {
+            $path = trim($this->user->username . '/' . input('album'), '/');
+        } else {
+            $path = trim(str_replace(
+                array_column($naming['path'], 'name'),
+                array_column($naming['path'], 'value'),
+                $pathRule
+            ), '/');
+        }
 
         if ($fileRule === '{original}') {
             $file = $name;
